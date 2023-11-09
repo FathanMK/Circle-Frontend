@@ -10,6 +10,7 @@ export default function Suggested() {
       gap={4}
       p={4}
       overflowY="scroll"
+      shadow="sm"
     >
       <Profile />
       <Profile />
