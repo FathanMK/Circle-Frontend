@@ -1,6 +1,6 @@
 import { Flex } from "@chakra-ui/react";
-import Profile from "./component/Profile/Profile";
-import Suggested from "./component/Suggested/Suggested";
+import Profile from "./components/Profile/Profile";
+import Suggested from "./components/Suggested/Suggested";
 
 export default function Sidebar() {
   return (

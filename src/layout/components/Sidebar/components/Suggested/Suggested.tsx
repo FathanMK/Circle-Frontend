@@ -1,5 +1,5 @@
 import { Flex } from "@chakra-ui/react";
-import Profile from "./component/Profile";
+import Profile from "./components/Profile";
 
 export default function Suggested() {
   return (

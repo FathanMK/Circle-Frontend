@@ -13,7 +13,7 @@ export default function Root() {
       gridTemplateColumns="0.9fr 2fr 1.5fr"
     >
       <Navbar />
-      <Box borderX="1px solid" borderColor="whiteAlpha.200" p={4}>
+      <Box overflowY="scroll" borderX="1px solid" borderColor="whiteAlpha.200">
         <Outlet />
       </Box>
       <Sidebar />
