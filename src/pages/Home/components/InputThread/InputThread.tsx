@@ -6,57 +6,17 @@ import {
   Text,
   Image,
   Box,
-  Divider,
   CircularProgress,
 } from "@chakra-ui/react";
 import { MdAddPhotoAlternate, MdClose } from "react-icons/md";
-import { useRef, useCallback, useState, ChangeEvent } from "react";
+import TextareaAutosize from "react-textarea-autosize";
+
+import useImageUpload from "./hooks/useImageUpload";
+import useTextarea from "./hooks/useTextarea";
 
 export default function InputThread() {
-  const [threadText, setThreadText] = useState("");
-  const [threadImage, setThreadImage] = useState<File | null>(null);
-  const [threadProgress, setThreadProgress] = useState(0);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  const handleTextareaInput = useCallback(() => {
-    if (textareaRef.current) {
-      const { scrollHeight, style } = textareaRef.current;
-      style.height = "auto";
-      style.height = `${scrollHeight}px`;
-    }
-  }, []);
-
-  const handleTextareaChange = useCallback(
-    (e: ChangeEvent<HTMLTextAreaElement>) => {
-      const characterLength = e.target.value.length;
-      const progress = (characterLength / 200) * 100;
-
-      setThreadText(e.target.value);
-      setThreadProgress(Math.min(progress, 100));
-    },
-    []
-  );
-
-  const handleImageChange = (event: Event) => {
-    const target = event.target as HTMLInputElement;
-    const file = target.files?.[0];
-    if (file) {
-      setThreadImage(file);
-    }
-  };
-
-  const handleImageUpload = () => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.id = "image";
-    input.name = "image";
-    input.onchange = handleImageChange;
-    input.click();
-  };
-
-  const handleImageRemove = () => {
-    setThreadImage(null);
-  };
+  const { image, handleImageUpload, handleImageRemove } = useImageUpload();
+  const { text, progress, textareaRef, handleTextareaChange } = useTextarea();
 
   return (
     <Flex
@@ -69,17 +29,20 @@ export default function InputThread() {
       <Avatar alignSelf="flex-start" />
       <Flex w="full" direction="column" position="relative">
         <Textarea
-          py={0}
+          as={TextareaAutosize}
+          pb={2}
+          pt={3}
           maxLength={200}
+          minH="50px"
           ref={textareaRef}
           resize="none"
           variant="unstyled"
+          letterSpacing="wider"
           placeholder="What is happening?!"
           _placeholder={{ fontSize: "xl" }}
-          onInput={handleTextareaInput}
           onChange={handleTextareaChange}
         />
-        <Box pos="relative">
+        <Box pos="relative" borderRadius="xl" overflow="hidden">
           <Button
             pos="absolute"
             size="sm"
@@ -94,8 +57,13 @@ export default function InputThread() {
           >
             <MdClose size={20} />
           </Button>
-          {threadImage && (
-            <Image w="full" src={URL.createObjectURL(threadImage as File)} />
+          {image && (
+            <Image
+              w="full"
+              src={
+                typeof image === "string" ? image : URL.createObjectURL(image)
+              }
+            />
           )}
         </Box>
         <Flex
@@ -105,7 +73,6 @@ export default function InputThread() {
           pos="sticky"
           bottom={0}
         >
-          <Divider />
           <Flex py={2} align="center" justify="space-between">
             <Button
               px={0}
@@ -117,15 +84,11 @@ export default function InputThread() {
               <MdAddPhotoAlternate size="30" />
             </Button>
             <Flex gap={2} align="center">
-              {threadProgress > 0 && (
-                <CircularProgress
-                  size="28px"
-                  color="accent"
-                  value={threadProgress}
-                />
+              {progress > 0 && (
+                <CircularProgress size="28px" color="accent" value={progress} />
               )}
               <Button
-                isDisabled={threadImage === null && threadText === ""}
+                isDisabled={image === null && text === ""}
                 size="sm"
                 borderRadius="full"
                 bg="accent"
